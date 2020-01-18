@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 
 import { EntityState, EntityStore, StoreConfig } from '@datorama/akita';
 import { QueryEntity } from '@datorama/akita';
-import { switchCase} from '@mindspace-io/utils';
+import { switchCase } from '@mindspace-io/utils';
 
 import { Todo, VISIBILITY_FILTER } from './todo.model';
 
@@ -15,7 +15,7 @@ export interface TodosState extends EntityState<Todo> {
 export class TodosStore extends EntityStore<TodosState, Todo> {
   constructor() {
     super({
-      filter: VISIBILITY_FILTER.SHOW_ALL,
+      filter: VISIBILITY_FILTER.SHOW_ALL
     });
   }
 }
@@ -30,13 +30,16 @@ export class TodosQuery extends QueryEntity<TodosState, Todo> {
 }
 
 function gatherVisibleTodos([filter, todos]): Todo[] {
-  const withFilter = switchCase({
-    [VISIBILITY_FILTER.SHOW_ACTIVE]   : () => todos.filter(t => !t.completed),
-    [VISIBILITY_FILTER.SHOW_COMPLETED]: () => todos.filter(t => t.completed)
-  }, todos || []);
+  const withFilter = switchCase(
+    {
+      [VISIBILITY_FILTER.SHOW_ACTIVE]: () => todos.filter(t => !t.completed),
+      [VISIBILITY_FILTER.SHOW_COMPLETED]: () => todos.filter(t => t.completed)
+    },
+    todos || []
+  );
 
   return withFilter(filter);
-};
+}
 
 export const todosStore = new TodosStore();
 export const todosQuery = new TodosQuery(todosStore);
